@@ -46,6 +46,26 @@ class Notification{
     timeout: 1000,
        }).show();
   } 
+
+  cart_success(){
+    new Noty({
+    type: 'success',
+    layout: 'topRight',
+    text: 'successfully add to cart ',
+    timeout: 1000,
+       }).show();
+  } 
+
+  cart_delete(){
+     new Noty({
+    type: 'success',
+    layout: 'topRight',
+    text: 'Cart delete ',
+    timeout: 1000,
+       }).show();
+
+  }
+ 
  
 }
 

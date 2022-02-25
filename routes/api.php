@@ -36,5 +36,12 @@ Route::post('/stock/update/{id}','Api\ProductController@stockUpdate');
 Route::get('/getting/product/{id}','Api\PosController@getProduct');
 
 
+//add to cart
+Route::get('/addTocart/{id}','Api\CartController@AddToCart');
+Route::get('/cart/product','Api\CartController@cartProduct');
+//remove  cart
+Route::get('/remove/cart/{id}','Api\CartController@removeCart');
+
+
 
 
