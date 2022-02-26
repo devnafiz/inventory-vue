@@ -39,9 +39,9 @@
                                           <tr v-for="cart in carts" :key="cart.id">
                                             <td>{{ cart.pro_name }}</td>
                                             <td><input type="text" readonly="" style="width: 15px;" :value="cart.pro_quantity">
-                                       <button  class="btn btn-sm btn-success">+</button>
-                                   <button   class="btn btn-sm btn-danger" >-</button>
-                                   <button class="btn btn-sm btn-danger"  disabled="">-</button>
+                                       <button @click.prevent="increment(cart.id)" class="btn btn-sm btn-success">+</button>
+                                   <button  @click.prevent="decrement(cart.id)"  class="btn btn-sm btn-danger" v-if="cart.pro_quantity>=2" >-</button>
+                                   <button class="btn btn-sm btn-danger"  disabled="" v-else="">-</button>
 
                                             </td>
                                             <td>{{ cart.product_price  }}</td>
@@ -58,26 +58,26 @@
                                  <ul class="list-group">
                                      <li class="list-group-item  d-flex justify-content-between align-items-center">
                                        Total quantity :
-                                       <strong>34</strong>
+                                       <strong>{{qty}}</strong>
                                      </li>
                                      <li class="list-group-item  d-flex justify-content-between align-items-center">
                                        Sub Total :
-                                       <strong>34</strong>
+                                       <strong>{{subtotal}}</strong>
                                      </li>
                                      <li class="list-group-item  d-flex justify-content-between align-items-center">
                                        Vat:
-                                       <strong>34%</strong>
+                                       <strong>{{vats.vat}}%</strong>
                                      </li>
                                       <li class="list-group-item  d-flex justify-content-between align-items-center">
                                        Total:
-                                       <strong>3499900</strong>
+                                       <strong>{{subtotal*vats.vat/100 + subtotal}}</strong>
                                      </li>
                                    
                                  </ul>
-                                 <form>
+                                 <form @submit.prevent="orderdone">
                                    <label>Customer Name</label>
                                    <select class="form-control" v-model="customer_id">
-                                    <option v-for="customer in customers" >{{customer.name}}</option>
+                                    <option v-for="customer in customers" :value="customer.id">{{customer.name}}</option>
                                      
                                    </select>
                                    <label>Pay</label>
@@ -87,9 +87,9 @@
                                    <input type="text"  class="form-control" required v-model="due">
 
                                    <label>Pay By</label>
-                                   <select class="form-control" v-model="customer_id">
-                                    <option value="hand cash">Hand cash</option>
-                                    <option value="gitt card">gift card</option>
+                                   <select class="form-control"  v-model="payby">
+                                    <option value="Handcash">Hand cash</option>
+                                    <option value="Gittcard">gift card</option>
                                     <option value="cheaque">cheaque</option>
                                      
                                    </select>
@@ -152,6 +152,7 @@
                                 <input type="text" v-model="getSearchTerm" class="form-control" style="width: 360px;" placeholder="Search Product">
                                    <div class="row">
                                     <div class="col-md-3 col-lg-3 col-sm-6" v-for="getproduct in getfiltersearch" :key="getproduct.id" style="margin:7px;">
+                                       <button @click.prevent="AddToCart(getproduct.id)" class="btn btn-sm">
                                         <div class="card" style="width: 8.5rem; margin-bottom: 5px;">
                                           <img :src="getproduct.image" id="em_photo" class="card-img-top">
                                           <div class="card-body">
@@ -162,7 +163,7 @@
                                             
                                           </div>
                                           
-                                        </div>
+                                        </div></button>
                                       
                                     </div>
                                   </div>
@@ -217,6 +218,7 @@
              this.allCategory();
               this.allCustomer();
               this.cartProduct();
+              this.vat();
 
               Reload.$on('AfterAdd',()=>{
                  this.cartProduct();
@@ -225,13 +227,18 @@
       },
 		data(){
       return{
+        customer_id:'',
+        pay:'',
+        due:'',
+        payby:'',
         products:[],
         categories:'',
         getproducts:[],
         searchTerm:'',
         getSearchTerm:'',
         customers:'',
-        carts:[]
+        carts:[],
+        vats:''
       }
     },	
     computed:{
@@ -247,6 +254,23 @@
 
           return getproduct.product_name.match(this.getSearchTerm)
         })
+       },
+
+       qty(){
+           let sum = 0;
+            for(let i = 0; i < this.carts.length; i++){
+               sum +=(parseFloat(this.carts[i].pro_quantity));
+            }
+
+           return sum; 
+       },
+
+       subtotal(){
+          let sum = 0;
+            for(let i = 0; i < this.carts.length; i++){
+               sum +=(parseFloat(this.carts[i].pro_quantity)*parseFloat(this.carts[i].product_price));
+            }
+            return sum;
        },
     },
 
@@ -300,7 +324,52 @@
 
         })
         .catch(error => this.errors = error.response.data.errors)
+      },
+      increment(id){
+
+          axios.get('/api/increment/'+id)
+        .then(() =>{
+            Reload.$emit('AfterAdd');
+            Notification.success();
+
+        })
+        .catch(error => this.errors = error.response.data.errors)
+      },
+       //decrement item
+      decrement(id){
+
+             axios.get('/api/decrement/'+id)
+        .then(() =>{
+            Reload.$emit('AfterAdd');
+            Notification.success();
+
+        })
+        .catch(error => this.errors = error.response.data.errors)
+
+      },
+
+      vat(){
+
+        axios.get('/api/vats/')
+        .then(({data}) =>(this.vats = data))
+        .catch(error => this.errors = error.response.data.errors)
+      },
+
+      orderdone(){
+        let total = this.subtotal*this.vats.vat/100 + this.subtotal;
+        var data = { qty:this.qty , subtotal:this.subtotal, customer_id :this.customer_id, payby:this.payby, pay:this.pay, due:this.due, vat:this.vats.vat, total:total }
+
+
+          axios.post('/api/orderdone',data)
+          .then(()=> {
+         
+          Notification.success()
+          this.$router.push({name :'home'})
+
+         })
+       
       }
+
 
 
       

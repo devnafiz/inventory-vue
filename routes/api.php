@@ -42,6 +42,17 @@ Route::get('/cart/product','Api\CartController@cartProduct');
 //remove  cart
 Route::get('/remove/cart/{id}','Api\CartController@removeCart');
 
+Route::get('/increment/{id}','Api\CartController@increment');
+Route::get('/decrement/{id}','Api\CartController@decrement');
+
+Route::get('/vats','Api\CartController@getVat');
+
+//pos
+
+
+Route::post('/orderdone','Api\PosController@orderDone');
+
+
 
 
 
