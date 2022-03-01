@@ -50,6 +50,8 @@ Route::get('/vats','Api\CartController@getVat');
 //pos
 
 
+Route::get('/orders','Api\OrderController@TodayOrder');
+
 Route::post('/orderdone','Api\PosController@orderDone');
 
 Route::get('/order/details/{id}','Api\OrderController@orderDetails');

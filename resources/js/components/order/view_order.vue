@@ -18,18 +18,19 @@
                   <div  class="row">
                     <div class="col-lg-6">
                        <div class="card">
+                        <div class="card-header align-items-center justify-content-center">
+                          <h6 class="text-center"> Order Details</h6>
+                          
+                        </div>
                          <div class="table-responsive">
-                            <table class="table align-items-center table-flush">
-                              <thead>
-                                <tr>
-                                  <th></th>
-                                  <th></th>
-                                  <th></th>
-                                  <th></th>
-                                </tr>
-                              </thead>
-                              
-                            </table>
+                           <ul class="list-group">
+                              <li class="list-group-item"><b>Name:</b>{{orders.name}}</li>
+                              <li class="list-group-item"><b>Phone:</b>{{orders.phone}}</li>
+                              <li class="list-group-item"><b>Address:</b>{{orders.address}}</li>
+                              <li class="list-group-item"><b>Date:</b>{{orders.order_date}}</li>
+                              <li class="list-group-item"><b>Pay Through:</b>{{orders.payby}}</li>
+                             
+                           </ul>
                            
                          </div>
                          
@@ -40,22 +41,63 @@
 
                       <div class="col-lg-6">
                        <div class="card">
+                        <div class="card-header align-items-center justify-content-center">
+                          <h6 class="text-center"> Order Details</h6>
+                          
+                        </div>
                          <div class="table-responsive">
-                            <table class="table align-items-center table-flush">
-                              <thead>
-                                <tr>
-                                  <th></th>
-                                  <th></th>
-                                  <th></th>
-                                  <th></th>
-                                </tr>
-                              </thead>
-                              
-                            </table>
+                            <ul class="list-group">
+                              <li class="list-group-item"><b>Sub Total:</b> {{orders.sub_total}} $</li>
+                              <li class="list-group-item"><b>Vat:</b> {{orders.vat}} $</li>
+                              <li class="list-group-item"><b>Total amount:</b> {{orders.total}} $</li>
+                              <li class="list-group-item"><b>Pay Amount:</b> {{orders.pay}} $</li>
+                              <li class="list-group-item"><b>Due amount:</b> {{orders.due}} $</li>
+                             
+                           </ul>
                            
                          </div>
                          
                        </div>
+                      
+                    </div>
+                    
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <div class="card">
+                        <div class="card-header align-items-center justify-content-center">
+                          <h6 class="text-center"> Order deatils</h6>
+                          
+                        </div>
+                        <div class="table-responsive">
+                             <table class=" table ">
+                                <thead>
+                                  <tr>
+                                    <th>Product name</th>
+                                     <th>Product Code</th>
+                                     <th>Image</th>
+                                     <th>Quantity</th>
+                                     <th>unit Price</th>
+                                      <th>Total</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr v-for="item in details">
+                                    <td>{{item.product_name}}</td>
+                                    <td>{{item.product_code}}</td>
+                                    <td><img :src="'/'+item.image" id="em_photo"></td>
+                                    <td>{{item.pro_quantity}}</td>
+                                    <td>{{item.product_price}}</td>
+                                    <td>{{item.sub_total}}</td>
+                                  </tr>
+                                </tbody>
+                               
+                             </table>
+                          
+                        </div>
+                        
+                      </div>
                       
                     </div>
                     
@@ -80,8 +122,11 @@
 
 </template>
 
-<style>
-	
+<style scoped>
+	#em_photo{
+    width: 40px;
+    height: 40px;
+  }
 </style>
 
 <script>

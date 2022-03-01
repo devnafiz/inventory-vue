@@ -97,7 +97,7 @@
 
     methods:{
       allOrders(){
-        axios.get('/api/orders/')
+        axios.get('/api/orders')
         .then(({data}) => (this.orders = data))
         .catch(error => this.errors = error.response.data.errors)
       },
